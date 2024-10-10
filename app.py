@@ -4,11 +4,10 @@ import pickle
 import joblib  # For loading the model
 import os
 
-
 app = Flask(__name__)
 
 # Load your pre-trained model
-model_pipeline = joblib.load('dataset/model_pipeline.pkl')  
+model_pipeline = joblib.load('dataset/model_pipeline.pkl')
 agent_data = pickle.load(open('dataset/agent_data.pkl', 'rb'))  # Load agent data
 customer_data = joblib.load('dataset/customer_data.pkl')
 
@@ -33,21 +32,20 @@ for i in range(start_index, len(customer_data), chunk_size):
     customer_data_chunk = customer_data[i:i + chunk_size]
     customer_data_chunk.to_hdf(hdf5_file, key='df', mode='a', format='table', append=True)
 
-
 customer_data = pd.read_hdf('dataset/customer_data.h5', where='customer_id == customer_id_value')
 
-
-agent_data["is_available"]= True 
+agent_data["is_available"] = True
 
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json  # Get JSON data from the request
     customer_id = data.get('customer_id')
     primary_call_reason = data.get('primary_call_reason')
-    customer_specific_data= customer_data.loc[customer_data['customer_id'] == customer_id]
-    customer_tone_score = 3 # intial value
-    if(customer_specific_data):
-        customer_tone_score= customer_specific_data.customer_tone_score
+    customer_specific_data = customer_data.loc[customer_data['customer_id'] == customer_id]
+    customer_tone_score = 3  # Initial value
+    if not customer_specific_data.empty:
+        customer_tone_score = customer_specific_data.customer_tone_score.values[0]
+    
     # Extract current hour (example)
     from datetime import datetime
     hour = datetime.now().hour
@@ -56,7 +54,7 @@ def predict():
     least_handle_time = float('inf')
 
     # Loop through agent_data to check availability
-    for agent, details in agent_data.items():
+    for index, details in agent_data.iterrows():
         if details['is_available']:  # Check if the agent is available
             # Prepare input for the agent
             agent_input = pd.DataFrame({
@@ -74,11 +72,12 @@ def predict():
             # Check if this agent has the least handle time
             if agent_handle_time < least_handle_time:
                 least_handle_time = agent_handle_time
-                least_handle_time_agent = agent
+                least_handle_time_agent = details['agent_id_x']
 
     if least_handle_time_agent is None:
         return jsonify({'error': 'No available agents.'}), 404
-    agent_data.loc[agent_data['agent_id_x'] == least_handle_time_agent, 'is_available'] = False # to change the status to false
+    
+    agent_data.loc[agent_data['agent_id_x'] == least_handle_time_agent, 'is_available'] = False  # Change status to false
     return jsonify({
         'transferred_to_agent': least_handle_time_agent,
         'least_handle_time': least_handle_time
@@ -93,6 +92,20 @@ def call_complete():
     if agent_id in agent_data['agent_id_x'].values:  # Check if agent exists
         agent_data.loc[agent_data['agent_id_x'] == agent_id, 'is_available'] = True
         return jsonify({'message': 'Agent status updated to available.'}), 200
+    else:
+        return jsonify({'error': 'Agent not found.'}), 404
+
+# New route to update agent availability
+@app.route('/update_availability', methods=['POST'])
+def update_availability():
+    data = request.json  # Get JSON data from the request
+    agent_id = data.get('agent_id')
+    availability = data.get('availability')  # This should be a boolean value
+    
+    # Update the agent's availability if the agent exists
+    if agent_id in agent_data['agent_id_x'].values:  # Check if agent exists
+        agent_data.loc[agent_data['agent_id_x'] == agent_id, 'is_available'] = availability
+        return jsonify({'message': f'Agent {agent_id} availability updated to {availability}.'}), 200
     else:
         return jsonify({'error': 'Agent not found.'}), 404
 

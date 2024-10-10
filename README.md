@@ -6,7 +6,7 @@ This project aims to optimize Average Handle Time (AHT) and Average Call Allocat
 
 Presentation Link:-
 
-https://www.canva.com/design/DAGTGEKgBg8/-JRQiZCpv14VkxiuuBWV8w/edit?utm_content=DAGTGEKgBg8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+https://www.canva.com/design/DAGTJm15k2k/UzHF9TO3m4twIsXDYgOlwQ/edit?utm_content=DAGTJm15k2k&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
 ## Table of Contents
 
@@ -33,74 +33,100 @@ https://www.canva.com/design/DAGTGEKgBg8/-JRQiZCpv14VkxiuuBWV8w/edit?utm_content
 
 ### Project Structure
 
-- `main_notebook.ipynb`: Contains data analysis and exploration of the datasets.
-- `model_notebook.ipynb`: Contains the predictive model for calculating handle time.
+- `main.ipynb`: Contains data analysis and exploration of the datasets.
+- `model.ipynb`: Contains the predictive model for calculating handle time.
 - `app.py`: The main Flask application for serving predictions.
 
 ### Endpoints
 
 1.  **Predict Endpoint**
 
-        - **URL**: `/predict`
-        - **Method**: `POST`
-        - **Request Body**:
+- URL: `/predict`
+- Method: `POST`
+- **Request Body**:
 
-          json
+        json
 
-          Copy code
+        Copy code
 
-          `{
+        `{
 
-    "customer_id": "12345",
-    "primary_call_reason": "Flight Inquiry"
-    }`
+          "customer_id": "12345",
+          "primary_call_reason": "Flight Inquiry"
 
-        - **Response**:
+         }`
 
-          json
+- **Response**:
 
-          Copy code
+        json
 
-          `{
+        Copy code
 
-    "transferred_to_agent": "agent_id_x",
-    "least_handle_time": 300.5
-    }`
+        `{
+           "transferred_to_agent": "agent_id_x",
+           "least_handle_time": 300.5
+         }`
 
 2.  **Call Complete Endpoint**
 
-        - **URL**: `/call_complete`
-        - **Method**: `POST`
-        - **Request Body**:
+- URL: `/call_complete`
+- Method: `POST`
+- **Request Body**:
 
-          json
+        json
 
-          Copy code
+        Copy code
 
-          `{
+        `{
 
-    "agent_id": "agent_id_x"
-    }`
+           "agent_id": "agent_id_x"
+         }`
 
-        - **Response**:
+- **Response**:
 
-          json
+        json
 
-          Copy code
+        Copy code
 
-          `{
+        `{
 
-    "message": "Agent status updated to available."
-    }`
+            "message": "Agent status updated to available."
+         }`
+
+3.  **Update Availability Endpoint**
+
+- URL: `/update_availability`
+- Method: `POST`
+- **Request Body**:
+
+      json
+
+      Copy code
+
+      `{
+
+         "agent_id": "agent_id_x",
+         "availability": true
+      }`
+
+- **Response**:
+
+        json
+
+        Copy code
+
+        `{
+            "message": "Agent {agent_id} availability updated to {availability}."
+         }`
 
 ## Data Requirements
 
 ``Ensure you have the following datasets in the `dataset` directory:
 
-- `customer.csv`: Contains information about the customers.
-- `calls.csv`: Contains details about the calls.
-- `reason.csv`: Contains reasons for the calls.
-- `sentiment_statistics.csv`: Contains sentiment analysis statistics.``
+    `customer.csv`: Contains information about the customers.
+    `calls.csv`: Contains details about the calls.
+    `reason.csv`: Contains reasons for the calls.
+    `sentiment_statistics.csv`: Contains sentiment analysis statistics.``
 
 ## How to Run the Application
 
@@ -112,7 +138,9 @@ https://www.canva.com/design/DAGTGEKgBg8/-JRQiZCpv14VkxiuuBWV8w/edit?utm_content
 
     `cd <repository_directory>`
 
-2.  Run the Flask application:
+2.  Run the Jupyter notebooks `main.ipynb` and `model.ipynb` to perform data analysis and train the predictive model.
+
+3.  Run the Flask application:
 
     bash
 
@@ -120,7 +148,7 @@ https://www.canva.com/design/DAGTGEKgBg8/-JRQiZCpv14VkxiuuBWV8w/edit?utm_content
 
     `python app.py`
 
-3.  The application will start on `http://127.0.0.1:5000`.
+4.  The application will start on `http://127.0.0.1:5000`.
 
 ## Example Requests
 
