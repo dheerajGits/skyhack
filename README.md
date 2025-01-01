@@ -46,22 +46,14 @@ https://www.canva.com/design/DAGTJm15k2k/UzHF9TO3m4twIsXDYgOlwQ/edit?utm_content
 - **Request Body**:
 
         json
-
-        Copy code
-
         `{
-
           "customer_id": "12345",
           "primary_call_reason": "Flight Inquiry"
-
          }`
 
 - **Response**:
 
         json
-
-        Copy code
-
         `{
            "transferred_to_agent": "agent_id_x",
            "least_handle_time": 300.5
@@ -74,22 +66,14 @@ https://www.canva.com/design/DAGTJm15k2k/UzHF9TO3m4twIsXDYgOlwQ/edit?utm_content
 - **Request Body**:
 
         json
-
-        Copy code
-
         `{
-
            "agent_id": "agent_id_x"
          }`
 
 - **Response**:
 
         json
-
-        Copy code
-
         `{
-
             "message": "Agent status updated to available."
          }`
 
@@ -100,11 +84,7 @@ https://www.canva.com/design/DAGTJm15k2k/UzHF9TO3m4twIsXDYgOlwQ/edit?utm_content
 - **Request Body**:
 
       json
-
-      Copy code
-
       `{
-
          "agent_id": "agent_id_x",
          "availability": true
       }`
@@ -112,9 +92,6 @@ https://www.canva.com/design/DAGTJm15k2k/UzHF9TO3m4twIsXDYgOlwQ/edit?utm_content
 - **Response**:
 
         json
-
-        Copy code
-
         `{
             "message": "Agent {agent_id} availability updated to {availability}."
          }`
@@ -132,45 +109,32 @@ https://www.canva.com/design/DAGTJm15k2k/UzHF9TO3m4twIsXDYgOlwQ/edit?utm_content
 
 1.  Navigate to the project directory:
 
-    bash
-
-    Copy code
-
+    ```bash
     `cd <repository_directory>`
 
 2.  Run the Jupyter notebooks `main.ipynb` and `model.ipynb` to perform data analysis and train the predictive model.
 
 3.  Run the Flask application:
 
-    bash
-
-    Copy code
-
+    ```bash
     `python app.py`
 
-4.  The application will start on `http://127.0.0.1:5000`.
 
 ## Example Requests
 
 ### Predict Handle Time
 
-bash
-
-Copy code
-
-`curl -X POST http://127.0.0.1:5000/predict \
--H "Content-Type: application/json" \
--d '{"customer_id": "12345", "primary_call_reason": "Flight Inquiry"}'`
+    ```bash
+     `curl -X POST http://127.0.0.1:5000/predict \
+      -H "Content-Type: application/json" \
+      -d '{"customer_id": "12345", "primary_call_reason": "Flight Inquiry"}'`
 
 ### Update Agent Status
 
-bash
-
-Copy code
-
-`curl -X POST http://127.0.0.1:5000/call_complete \
--H "Content-Type: application/json" \
--d '{"agent_id": "agent_id_x"}'`
+    ```bash
+    `curl -X POST http://127.0.0.1:5000/call_complete \
+    -H "Content-Type: application/json" \
+    -d '{"agent_id": "agent_id_x"}'
 
 ## License
 
